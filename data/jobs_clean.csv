@@ -1,0 +1,18 @@
+title,company,location,experience,salary,date_posted,skills,city,is_remote,salary_min,salary_max,exp_years
+Field Sales Executive,"Online Classifieds Pakistan (SMC - Private) Limited,",Lahore,1 Year,50K - 50K,,"['territory management', 'b2b sales', 'field sales', 'negotiation']",Lahore,0,50000.0,50000.0,1.0
+Call For Application-National Graphic Design Consultant,"United Nations Pakistan,",ICT,4 Years,,,[],ICT,0,,,4.0
+Floor Manager Sewing,"Crescent Bahuman Limited,",Pindi Bhattian,15 Years,,,"['lean manufacturing', 'production planning', 'safety compliance', 'production scheduling', 'workflow optimization', 'inventory management', 'denim sewing production targets']",Pindi Bhattian,0,,,15.0
+Sewing Shift In Charge,"Crescent Bahuman Limited,",Pindi Bhattian,10 Years,,,"['lean manufacturing', 'production planning', 'safety compliance', 'production scheduling', 'floor management', 'production target', 'workforce scheduling', 'denim garment stitching process', 'denim garment stitching techniques']",Pindi Bhattian,0,,,10.0
+Unit Manager Quality Control Finishing,"Crescent Bahuman Limited,",Pindi Bhattian,10 Years,,,"['data analysis', 'root cause analysis', 'quality control management', 'denim garment finishing']",Pindi Bhattian,0,,,10.0
+Driver,"United Nations Pakistan,",Karachi,1 Year,,,[],Karachi,0,,,1.0
+Branch Manager,"U Microfinance Bank,",Faisalabad,4 Years,,,"['communication skills', 'retail sales knowledge', 'interpersonal leadership', 'business problems analysis']",Faisalabad,0,,,4.0
+Logistics And Supply Supervisor,"Medecins Sans Frontieres (MSF),",Gujranwala,2 Years,125K - 150K,,"['supply chain', 'mit knowledge', 'fleet management', 'logistics management', 'inventory control', 'logistic support', 'emergency planning', 'team workshops management', 'fleet operations management', 'critical incident stress management', 'security measures implementation', 'logistics systems knowledge']",Gujranwala,0,125000.0,150000.0,2.0
+Relationship Officer Asset,"Mobilink Bank,",", Pakistan",,,,[],,0,,,
+General Banking Officer,"Mobilink Bank,",Faisalabad,,,,[],Faisalabad,0,,,
+Manager Quality Assurance & Reporting Call Centers,"Mobilink Bank,",Islamabad,,,,[],Islamabad,0,,,
+Relationship Manager Asset,"Mobilink Bank,",Khushab,,,,[],Khushab,0,,,
+Relationship Officer Asset,"Mobilink Bank,",Khushab,,,,[],Khushab,0,,,
+Relationship Manager Asset,"Mobilink Bank,",", Pakistan",,,,[],,0,,,
+Relationship Officer Asset,"Mobilink Bank,",Shorkot,,,,[],Shorkot,0,,,
+Relationship Officer Asset,"Mobilink Bank,",Lahore,,,,[],Lahore,0,,,
+Relationship Manager Asset,"Mobilink Bank,",Karachi,,,,[],Karachi,0,,,
