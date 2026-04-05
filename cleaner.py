@@ -1,66 +1,73 @@
 import pandas as pd
-import re
 import numpy as np
 import os
 
-def parse_salary(val):
-    """Resilient salary parser for '50K - 100K' or '70K' formats."""
-    if pd.isna(val) or str(val).lower() in ['n/a', 'not disclosed', 'unknown']:
-        return np.nan, np.nan
-    matches = re.findall(r'(\d+)K', str(val))
-    if len(matches) >= 2:
-        return int(matches[0]) * 1000, int(matches[1]) * 1000
-    if len(matches) == 1:
-        return int(matches[0]) * 1000, int(matches[0]) * 1000
-    return np.nan, np.nan
-
-def clean_data(input_path='data/jobs_raw.csv', output_path='data/jobs_clean.csv'):
-    if not os.path.exists(input_path):
-        print(f"❌ Source file {input_path} not found.")
+def run_cleaning_pipeline():
+    raw_path = 'data/jobs_raw.csv'
+    clean_path = 'data/jobs_clean.csv'
+    
+    if not os.path.exists(raw_path):
+        print(f"❌ Error: {raw_path} not found. Execute scraper.py first.")
         return
 
-    df = pd.read_csv(input_path)
-    print(f"--- Ingested {len(df)} raw records ---")
+    # Load Raw Dataset
+    df = pd.read_csv(raw_path)
+    print(f"📡 Ingested {len(df)} records. Starting Sanitization...")
 
-    # 1. Handle Critical Missing Data
-    # We fill 'skills' with 'Not Specified' so we don't lose the rows
-    df['skills'] = df['skills'].fillna('Not Specified')
-    df['experience'] = df['experience'].fillna('Not Specified')
-    df['salary'] = df['salary'].fillna('Not Disclosed')
-
-    # 2. Text Normalization
+    # --- Stage 1: String Normalization ---
+    # Title Case for consistency and stripping artifacts
     df['title'] = df['title'].str.strip().str.title()
-    df['company'] = df['company'].str.strip()
+    # Remove trailing commas often found in company names from breadcrumbs
+    df['company'] = df['company'].str.strip().str.rstrip(',')
+
+    # --- Stage 2: Geographic Standardization ---
+    # Remove country suffix and handle empty location clusters
+    df['location'] = df['location'].str.replace(', Pakistan', '', case=False).str.strip()
+    df['location'] = df['location'].replace(['', ',', 'nan'], 'Unknown')
+    df['location'] = df['location'].fillna('Unknown')
+
+    # --- Stage 3: Skill Taxonomy Tokenization ---
+    # Handle NaNs and normalize for frequency distribution
+    df['skills'] = df['skills'].fillna('Not Specified')
     
-    # 3. Location & Remote Logic
-    # Splits "Lahore, Pakistan" -> "Lahore"
-    df['city'] = df['location'].apply(lambda x: str(x).split(',')[0].strip())
-    df['is_remote'] = df['location'].str.contains('remote', case=False, na=False).astype(int)
-
-    # 4. Numerical Extraction (without dropping rows)
-    salary_cols = df['salary'].apply(lambda x: pd.Series(parse_salary(x)))
-    df['salary_min'] = salary_cols[0]
-    df['salary_max'] = salary_cols[1]
+    def normalize_skills(s):
+        if s == 'Not Specified': return s
+        # Lowercase, strip each token, and join back for CSV readability
+        return ', '.join([skill.strip().lower() for skill in s.split(',')])
     
-    # Extract years (e.g., '1 Year' -> 1.0)
-    df['exp_years'] = df['experience'].str.extract(r'(\d+)').astype(float)
+    df['skills'] = df['skills'].apply(normalize_skills)
 
-    # 5. Smart Deduplication
-    # We only drop if Title, Company, and City are identical.
-    before_dedup = len(df)
-    df.drop_duplicates(subset=['title', 'company', 'city'], inplace=True)
-    print(f"📉 Deduplication: Removed {before_dedup - len(df)} duplicate listings.")
+    # --- Stage 4: Heuristic Classification ---
+    # Expanded tech_stack to capture DevOps, SQA, and Cloud roles
+    tech_stack = [
+        'software', 'developer', 'data', 'analyst', 'it', 'web', 'python', 'java', 
+        'sql', 'engineer', 'react', 'node', 'flutter', 'technical', 'devops', 
+        'fullstack', 'frontend', 'backend', 'cloud', 'database', 'aws', 'mobile', 
+        'android', 'ios', 'cyber', 'sqa', 'automation', 'testing', 'bioinformatic'
+    ]
+    pattern = '|'.join(tech_stack)
+    df['is_tech'] = df['title'].str.contains(pattern, case=False, na=False).astype(int)
 
-    # 6. Tech Categorization (Crucial for your LinkedIn project)
-    tech_keywords = ['software', 'developer', 'engineer', 'data', 'analyst', 'it', 'web', 'python', 'java', 'graphic']
-    df['is_tech'] = df['title'].str.contains('|'.join(tech_keywords), case=False, na=False).astype(int)
+    # --- Stage 5: Experience Coefficient Extraction ---
+    # Extract numerical value for quantitative analysis
+    df['exp_years'] = df['experience'].str.extract(r'(\d+)').astype(float).fillna(0)
 
-    # Final Audit
-    print(f"✅ Clean complete. Final count: {len(df)} rows.")
-    print(f"💻 Tech Jobs identified: {df['is_tech'].sum()}")
-    
+    # --- Stage 6: Global Deduplication ---
+    # Verify uniqueness across Title-Company-Location triads
+    before_count = len(df)
+    df.drop_duplicates(subset=['title', 'company', 'location'], inplace=True)
+    after_count = len(df)
+
+    # Export Processed Data
     os.makedirs('data', exist_ok=True)
-    df.to_csv(output_path, index=False)
+    df.to_csv(clean_path, index=False)
+    
+    print("-" * 30)
+    print(f"✅ CLEANING COMPLETE")
+    print(f"📊 Unique Records: {after_count}")
+    print(f"📉 Redundant Rows Dropped: {before_count - after_count}")
+    print(f"💻 Tech vs General Split: {df['is_tech'].sum()} Tech Roles identified.")
+    print("-" * 30)
 
 if __name__ == "__main__":
-    clean_data()
+    run_cleaning_pipeline()
