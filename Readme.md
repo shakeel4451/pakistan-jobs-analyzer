@@ -138,7 +138,7 @@ The scraper is also production-grade: it handles pagination, lazy loading, rando
 ## 🔗 Author
 
 **Muhammad Shakeel** — CS Graduate | Python Developer | Aspiring AI Engineer  
-[GitHub](https://github.com/shakeel4451) · [LinkedIn](https://linkedin.com/in/your-handle)
+[GitHub](https://github.com/shakeel4451) · [LinkedIn](www.linkedin.com/in/muhammad-shakeel-48367236a)
 
 ---
 
