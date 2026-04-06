@@ -1,145 +1,250 @@
-# 🇵🇰 Pakistan Jobs Market Analyzer — 2026
+# Pakistan Jobs Market Analyzer 🇵🇰
 
-> A complete end-to-end data pipeline that scrapes, cleans, analyzes, and visualizes the Pakistani tech job market in real time.
+<div align="center">
 
-![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python)
-![Playwright](https://img.shields.io/badge/Playwright-scraping-green?logo=playwright)
-![Pandas](https://img.shields.io/badge/Pandas-data--cleaning-lightblue?logo=pandas)
-![Plotly](https://img.shields.io/badge/Plotly-visualization-purple?logo=plotly)
-![Streamlit](https://img.shields.io/badge/Streamlit-dashboard-red?logo=streamlit)
+![Banner](assets/banner.png)
 
----
+**A production-grade, end-to-end data platform that collects, processes, and analyzes real-time job market data in Pakistan using fully self-sourced datasets.**
 
-## 📌 What This Project Does
+<br/>
 
-Automatically collects **1,000+ job listings** from [Rozee.pk](https://www.rozee.pk) across Pakistan's top cities, cleans the data using Pandas, extracts market insights, and serves everything as an interactive Streamlit dashboard.
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Playwright](https://img.shields.io/badge/Playwright-Scraping-2EAD33?style=for-the-badge&logo=playwright&logoColor=white)](https://playwright.dev/python/)
+[![Pandas](https://img.shields.io/badge/Pandas-Data%20Engineering-150458?style=for-the-badge&logo=pandas&logoColor=white)](https://pandas.pydata.org/)
+[![Plotly](https://img.shields.io/badge/Plotly-Analytics-3F4F75?style=for-the-badge&logo=plotly&logoColor=white)](https://plotly.com/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-Data%20App-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io/)
 
-**Key questions it answers:**
+<br/>
 
-- What are the most in-demand skills in Pakistan's job market right now?
-- Which cities have the most tech opportunities?
-- What's the ratio of remote to on-site roles?
-- Which companies are hiring the most?
+[![Live Demo](https://img.shields.io/badge/🚀%20Live%20Dashboard-Open%20App-FF4B4B?style=for-the-badge)](https://pakistan-jobs-analyzer.streamlit.app/)
 
----
-
-## 📊 Key Findings (April 2026)
-
-| Metric               | Value                |
-| -------------------- | -------------------- |
-| Total jobs analyzed  | 1,020                |
-| Tech sector share    | 37.6%                |
-| Remote opportunities | 0.2%                 |
-| Top hiring city      | Lahore (394 jobs)    |
-| #1 tech skill        | Python               |
-| #1 market-wide skill | Communication Skills |
+</div>
 
 ---
 
-## 🗂️ Project Structure
+## 🚀 Overview
+
+Most data science portfolios rely on static datasets. This project takes a **data engineering-first approach**, building a complete pipeline from raw web data to production-ready analytics.
+
+> **Goal:** Extract real-time hiring intelligence from Pakistan’s job market.
+
+This system answers:
+
+- What skills are actually in demand right now?
+- Which cities dominate hiring?
+- How does tech hiring compare to non-tech?
+- Which companies are actively recruiting?
+
+---
+
+## ✨ Core Features
+
+- 🔄 End-to-end pipeline (Scraping → Cleaning → Analysis → Visualization)
+- ⚡ Async scraping across 300+ dynamic pages
+- 🧠 Fingerprint-based deduplication (title + company hashing)
+- 📊 Interactive dashboard with real-time filters
+- 🌍 Fully self-sourced dataset (no Kaggle dependency)
+- 🧩 Modular, scalable architecture (production-style separation of concerns)
+
+---
+
+## 📸 Dashboard Preview
+
+![Dashboard](assets/dashboard.png)
+
+---
+
+## 📊 Key Insights (April 2026)
+
+| Metric               | Value      |
+| -------------------- | ---------- |
+| Total Jobs           | **1,020**  |
+| Unique Companies     | **446**    |
+| Tech Share           | **37.6%**  |
+| Remote Jobs          | **0.2%**   |
+| Top Hiring City      | **Lahore** |
+| Most In-Demand Skill | **Python** |
+
+---
+
+## 🏗️ System Architecture
 
 ```
 pakistan-jobs-analyzer/
-├── scraper.py        # Playwright scraper — Rozee.pk multi-keyword/city
-├── cleaner.py        # Pandas pipeline — normalization, dedup, tagging
-├── analyzer.py       # Terminal market audit report
-├── dashboard.py      # Streamlit interactive dashboard
+│
+├── scraper.py          # Async Playwright pipeline
+├── cleaner.py          # Data cleaning & feature engineering
+├── analyzer.py         # Terminal-based reporting
+├── dashboard.py        # Streamlit dashboard
+│
 ├── data/
-│   ├── jobs_raw.csv  # Raw scraped output
-│   └── jobs_clean.csv# Cleaned, tagged, analysis-ready
+│   ├── jobs_raw.csv
+│   └── jobs_clean.csv
+│
 └── README.md
 ```
 
 ---
 
-## 🚀 Getting Started
+## ⚙️ Pipeline Breakdown (Deep Technical)
 
-### 1. Install dependencies
+### 1️⃣ Scraping Layer — `scraper.py`
+
+- Uses **Playwright async API** with headless Chromium
+- Handles **JavaScript-rendered DOM**
+- Iterates across:
+  - 40+ keywords
+  - 4 cities
+  - 2 pagination offsets
+
+- Implements:
+  - Lazy-load triggering via scroll
+  - Random delays to avoid rate limits
+  - CSS selector-based extraction
+
+**Deduplication Strategy:**
+
+- Generates fingerprint: `(title + company).lower()`
+- Stored in Python `set()`
+- Prevents duplicate ingestion at source level
+
+---
+
+### 2️⃣ Data Processing — `cleaner.py`
+
+Transforms raw scraped data into structured dataset:
+
+- Title normalization (`str.title()`)
+- Company cleaning (remove DOM artifacts)
+- Location parsing (`Remote, Lahore → Lahore`)
+- Skill normalization (synonym mapping)
+- Intra-row deduplication using `set()`
+- Global deduplication using composite key
+
+**Feature Engineering:**
+
+- `is_remote` → keyword detection (title + location)
+- `is_tech` → regex-based classification using tech keywords
+
+---
+
+### 3️⃣ Analysis Layer — `analyzer.py`
+
+- CLI-based reporting tool
+- Computes:
+  - Job distribution
+  - Skill frequencies
+  - City-level demand
+  - Tech vs non-tech ratios
+
+---
+
+### 4️⃣ Visualization Layer — `dashboard.py`
+
+- Built using **Streamlit + Plotly**
+- Features:
+  - KPI cards
+  - City-level analysis
+  - Skill demand charts
+  - Company hiring leaderboard
+
+**Interactive Controls:**
+
+- City filter
+- Tech vs Non-Tech filter
+- Search (title + skills)
+
+---
+
+## 🧠 Design Decisions
+
+**Why Playwright?**
+Handles dynamic JavaScript content where traditional scraping fails.
+
+**Why Async Architecture?**
+Efficiently processes hundreds of page loads without blocking.
+
+**Why Pre-ingestion Deduplication?**
+Prevents duplicate data from corrupting downstream analytics.
+
+**Why Dual-field Remote Detection?**
+Captures inconsistencies in employer labeling.
+
+---
+
+## ⚠️ Data Limitations
+
+- Single data source (Rozee.pk)
+- Limited to major cities
+- Skill tags depend on employer input
+- Remote jobs underreported
+
+---
+
+## 🔮 Future Improvements
+
+- Multi-platform scraping (LinkedIn, Indeed)
+- NLP-based skill extraction from descriptions
+- Salary analysis
+- Automated scheduled pipelines (cron jobs)
+- Time-series trend tracking
+
+---
+
+## 🧪 Running Locally
 
 ```bash
-pip install playwright pandas plotly streamlit
+# Clone repo
+git clone https://github.com/shakeel4451/pakistan-jobs-analyzer.git
+cd pakistan-jobs-analyzer
+
+# Install dependencies
+pip install -r requirements.txt
 playwright install chromium
-```
 
-### 2. Scrape fresh data
-
-```bash
+# Run pipeline
 python scraper.py
-```
-
-Targets 40 keywords × 4 cities (Lahore, Karachi, Islamabad, Rawalpindi) with pagination. Saves to `data/jobs_raw.csv`.
-
-### 3. Clean the data
-
-```bash
 python cleaner.py
-```
-
-- Strips and normalizes job titles and company names
-- Detects remote roles from both title and location fields
-- Maps skill synonyms (e.g. `Microsoft Excel` → `ms excel`)
-- Tags tech roles using keyword matching
-- Deduplicates on `title + company + location`
-- Saves to `data/jobs_clean.csv`
-
-### 4. Run the terminal audit
-
-```bash
 python analyzer.py
-```
-
-Prints a formatted market report with KPIs, top cities, and skill frequency tables.
-
-### 5. Launch the dashboard
-
-```bash
 streamlit run dashboard.py
 ```
-
-Opens an interactive dashboard with filters, charts, and a searchable data table.
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Layer         | Tool                                                |
-| ------------- | --------------------------------------------------- |
-| Scraping      | Playwright (async, headless Chromium)               |
-| Data cleaning | Pandas                                              |
-| Visualization | Plotly Express                                      |
-| Dashboard     | Streamlit                                           |
-| Bot bypass    | `wait_for_load_state`, `mouse.wheel`, random delays |
-| Deduplication | Fingerprint hashing (`title-company` pair)          |
+| Layer         | Technology |
+| ------------- | ---------- |
+| Scraping      | Playwright |
+| Processing    | Pandas     |
+| Visualization | Plotly     |
+| Dashboard     | Streamlit  |
 
 ---
 
-## 💡 What Makes This Different
+## 🎯 ATS / Recruiter Keywords
 
-Most data science portfolios use Kaggle datasets. This project sources **fresh, real-world data** directly from Pakistan's largest job platform — giving insights that are actually current and locally relevant.
-
-The scraper is also production-grade: it handles pagination, lazy loading, random delays to avoid bot detection, and deduplicates across keyword/city combinations.
-
----
-
-## 📈 Dashboard Features
-
-- **KPI cards** — total jobs, tech share, remote rate, unique companies
-- **City distribution** bar chart
-- **Remote vs On-site** donut chart
-- **Top 12 in-demand skills** (all sectors)
-- **Top 12 tech-specific skills**
-- **Tech vs Non-Tech by city** stacked bar
-- **Experience level distribution**
-- **Top 15 hiring companies**
-- **Filterable data table** — search by title, skill, city, or sector
+**Data Engineering:** Data Pipeline, ETL, Data Cleaning, Feature Engineering, Data Processing
+**Web Scraping:** Playwright, Web Automation, Async Scraping, Headless Browser
+**Data Science:** Pandas, Data Analysis, Data Visualization, Exploratory Data Analysis
+**Backend Concepts:** Async Programming, Deduplication, Data Integrity, Scalable Systems
+**Tools:** Python, Streamlit, Plotly, GitHub Deployment
 
 ---
 
-## 🔗 Author
+## 👤 Author
 
-**Muhammad Shakeel** — CS Graduate | Python Developer | Aspiring AI Engineer  
-[GitHub](https://github.com/shakeel4451) · [LinkedIn](www.linkedin.com/in/muhammad-shakeel-48367236a)
+**Muhammad Shakeel**
+Python Developer · Data Engineer · Aspiring AI Engineer
 
 ---
 
-_Data collected April 2026 from Rozee.pk. For educational and portfolio purposes._
+## ⭐ Support
+
+If you found this project valuable, consider giving it a ⭐ on GitHub.
+
+---
+
+## 📄 License
+
+MIT License — for educational and portfolio use.
